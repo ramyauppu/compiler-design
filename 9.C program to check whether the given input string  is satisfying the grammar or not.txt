@@ -1,0 +1,85 @@
+#include <stdio.h>
+#include <string.h>
+#include <stdbool.h>
+
+
+bool isSentence(char *input);
+
+
+bool isSentence(char *input) {
+    // Grammar rules:
+    // Sentence -> Subject Verb Object
+    // Subject -> "I" | "You" | "He" | "She" | "They"
+    // Verb -> "am" | "are" | "is" | "was" | "were"
+    // Object -> "happy" | "sad" | "hungry" | "thirsty"
+    
+    
+    char *token = strtok(input, " ");
+    
+   
+    if (token != NULL && 
+        (strcmp(token, "I") == 0 ||
+         strcmp(token, "You") == 0 ||
+         strcmp(token, "He") == 0 ||
+         strcmp(token, "She") == 0 ||
+         strcmp(token, "They") == 0)) {
+        
+        
+        token = strtok(NULL, " ");
+        
+        
+        if (token != NULL &&
+            (strcmp(token, "am") == 0 ||
+             strcmp(token, "are") == 0 ||
+             strcmp(token, "is") == 0 ||
+             strcmp(token, "was") == 0 ||
+             strcmp(token, "were") == 0)) {
+            
+            
+            token = strtok(NULL, " ");
+            
+            
+            if (token != NULL &&
+                (strcmp(token, "happy") == 0 ||
+                 strcmp(token, "sad") == 0 ||
+                 strcmp(token, "hungry") == 0 ||
+                 strcmp(token, "thirsty") == 0)) {
+                
+                
+                if (strtok(NULL, " ") == NULL) {
+                    return true;
+                }
+            }
+        }
+    }
+    
+    
+    return false;
+}
+
+int main() {
+   
+    char input[100];
+    
+   
+    printf("Enter a sentence: ");
+    fgets(input, sizeof(input), stdin);
+    
+    
+    input[strcspn(input, "\n")] = 0;
+    
+   
+    if (isSentence(input)) {
+        printf("Input string is a valid sentence.\n");
+    } else {
+        printf("Input string is not a valid sentence.\n");
+    }
+    
+    return 0;
+}
+
+
+OUTPUT :
+Enter a sentence: You are happy
+Input string is a valid sentence.
+
