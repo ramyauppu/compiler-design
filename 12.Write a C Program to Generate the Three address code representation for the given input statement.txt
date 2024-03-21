@@ -1,0 +1,48 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <stdbool.h>
+
+#define MAX_CODE_LENGTH 100
+
+
+void generateThreeAddressCode(char *expression);
+void emit(char *op, char *arg1, char *arg2, char *result);
+
+
+void emit(char *op, char *arg1, char *arg2, char *result) {
+    printf("%s, %s, %s, %s\n", op, arg1, arg2, result);
+}
+
+
+void generateThreeAddressCode(char *expression) {
+    char *token = strtok(expression, "+-*/");
+    char *result = "T1"; // Temporary variable
+    emit("=", token, "", result);
+    
+    while ((token = strtok(NULL, "+-*/")) != NULL) {
+        char *op = expression;
+        expression += strlen(token) + 1; // Move past the operator
+        
+        char *arg1 = result;
+        char *arg2 = token;
+        result = "T";
+        char result_str[3]; // Assuming at most 99 temporary variables
+        sprintf(result_str, "%d", atoi(result + 1) + 1);
+        strcat(result, result_str);
+        
+        emit(op, arg1, arg2, result);
+    }
+}
+
+int main() {
+    char expression[100];
+    printf("Enter an arithmetic expression: ");
+    fgets(expression, sizeof(expression), stdin);
+    expression[strcspn(expression, "\n")] = '\0'; // Remove newline character
+    
+    printf("Three-address code representation:\n");
+    generateThreeAddressCode(expression);
+    
+    return 0;
+}

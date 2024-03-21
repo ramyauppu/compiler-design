@@ -1,0 +1,109 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <ctype.h>
+
+// Function prototypes
+int expr();
+int term();
+int factor();
+void error();
+
+// Global variables
+char *input;
+
+// Function to advance to the next character in the input
+void advance() {
+    input++;
+}
+
+// Function to check if the current character is a digit
+int is_digit(char c) {
+    return (c >= '0' && c <= '9');
+}
+
+// Function to parse an integer
+int parse_int() {
+    int result = 0;
+    while (is_digit(*input)) {
+        result = result * 10 + (*input - '0');
+        advance();
+    }
+    return result;
+}
+
+// Function to parse a factor
+int factor() {
+    if (*input == '(') {
+        advance(); // consume '('
+        int result = expr();
+        if (*input == ')') {
+            advance(); // consume ')'
+            return result;
+        } else {
+            error();
+            return 0;
+        }
+    } else if (is_digit(*input)) {
+        return parse_int();
+    } else {
+        error();
+        return 0;
+    }
+}
+
+// Function to parse a term
+int term() {
+    int result = factor();
+    while (*input == '*' || *input == '/') {
+        char op = *input;
+        advance(); // consume the operator
+        int next_factor = factor();
+        if (op == '*') {
+            result *= next_factor;
+        } else {
+            if (next_factor != 0) {
+                result /= next_factor;
+            } else {
+                error();
+                return 0;
+            }
+        }
+    }
+    return result;
+}
+
+// Function to parse an expression
+int expr() {
+    int result = term();
+    while (*input == '+' || *input == '-') {
+        char op = *input;
+        advance(); // consume the operator
+        int next_term = term();
+        if (op == '+') {
+            result += next_term;
+        } else {
+            result -= next_term;
+        }
+    }
+    return result;
+}
+
+// Function to print error message and exit
+void error() {
+    fprintf(stderr, "Error in parsing expression\n");
+    exit(1);
+}
+
+int main() {
+    // Read input expression
+    printf("Enter an arithmetic expression: ");
+    char buffer[100];
+    fgets(buffer, sizeof(buffer), stdin);
+    input = buffer;
+
+    // Parse and evaluate expression
+    int result = expr();
+    printf("Result: %d\n", result);
+
+    return 0;
+}
